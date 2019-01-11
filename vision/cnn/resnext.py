@@ -50,12 +50,13 @@ class ResNext:
             3, 3), stride=(2, 2), pad=(1, 1), name='stage0_map')
 
         data = stage0_map
+        self.features = []
         for i, num_layer in enumerate(layers):
             stride = 1 if i == 0 else 2
             data = self.__make_layer(data, channels, num_layer, stride, i + 1)
 
             channels *= 2
-        self.features = data
+            self.features.append(data)
 
         gap = sym.Pooling(self.features, pool_type='avg', global_pool=True)
         fc = sym.FullyConnected(gap, num_hidden=classes)

@@ -53,10 +53,12 @@ class Resnet:
         block0_map = sym.Pooling(block0_act1, pool_type='max', global_pool=True)
 
         data = block0_map
+        self.features = []
         for i, num_layer in enumerate(layers):
             stride = 1 if i == 0 else 2
             data = self._make_layer(data, block_func, num_layer, channels[i+1], channels[i], (stride,stride), i+1)
-        self.features = data
+            self.features.append(data)
+    
         gap = sym.Pooling(self.features, pool_type='avg', global_pool=True)
         fc = sym.FullyConnected(gap, num_hidden=classes)
         self.output = sym.SoftmaxOutput(data=fc, label=label, name='softmax_ouput')
